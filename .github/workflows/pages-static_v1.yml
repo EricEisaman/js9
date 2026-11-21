@@ -1,0 +1,52 @@
+# Deploy static JS9 to Pages — no Jekyll
+# Replaces the old jekyll-build-pages workflow.
+# JS9 is prebuilt static HTML/JS. Jekyll must never run over it.
+# The broken demos/data symlink is removed in CI before upload.
+name: Deploy static JS9 to Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Remove broken demos/data symlink
+        run: |
+          # demos/data in upstream JS9 is a symlink to the separate js9data repo.
+          # It does not exist in this fork, and Jekyll / Pages cannot follow it.
+          # Remove the link, replace with a real empty dir + README.
+          if [ -L demos/data ]; then echo "Removing broken symlink demos/data"; rm demos/data; fi
+          mkdir -p demos/data
+          # Ensure Pages never runs Jekyll, even if source is set to branch deploy
+          touch .nojekyll
+          ls -l demos/ | head -20
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
