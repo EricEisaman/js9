@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Chandra Data Analysis</title>
 <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 <link rel="stylesheet" href="js9support.css">
 <link rel="stylesheet" href="js9.css">
 <script src="js9prefs.js"></script>
@@ -30,14 +30,12 @@ body{background:#05070d;color:#e8eef7;font-family:Inter,system-ui,-apple-system,
 .card-main .JS9Menubar,.card-main .JS9Toolbar{padding:8px 10px 0;max-width:100%}
 .display-wrap{position:relative;width:100%;max-width:100%;overflow:hidden;background:#000}
 .display-wrap .JS9{border-radius:0;display:block}
-.display-wrap .JS9Statusbar{position:absolute;top:0;left:0;right:0;z-index:10;pointer-events:none;background:transparent!important;color:#00ff00!important;font-family:monospace!important;font-size:13px!important;line-height:1.4;padding:6px 10px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.display-wrap .JS9Statusbar *{color:#00ff00!important;background:transparent!important}
+#greenOverlay{position:absolute;top:0;left:0;right:0;z-index:50;pointer-events:none;background:transparent;color:#00ff00;font-family:monospace;font-size:13px;line-height:1.4;padding:6px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 0 2px #000,0 0 4px #000}
 .card-main .JS9Colorbar{padding:8px 10px 10px;max-width:100%;overflow:hidden}
 .side{display:flex;flex-direction:column;gap:16px;min-width:0;max-width:100%}
 .side .card{padding:12px;background:#0b1220}
 .side .card .JS9Magnifier,.side .card .JS9Panner{background:#000!important;border-radius:12px;overflow:hidden;max-width:100%}
 .side .card .JS9Magnifier canvas,.side .card .JS9Panner canvas{background:#000!important}
-.side .card .JS9Magnifier>div,.side .card .JS9Panner>div{background:#000!important}
 .side .JS9Info{font-size:13px;line-height:1.5;max-width:100%;overflow:auto}
 .analysis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:0 16px 16px;width:100%;max-width:100vw;margin:0 auto;min-width:0}
 @media(max-width:900px){.analysis{grid-template-columns:minmax(0,1fr);padding:0 12px 12px}}
@@ -45,7 +43,7 @@ body{background:#05070d;color:#e8eef7;font-family:Inter,system-ui,-apple-system,
 .analysis .card>div{max-width:100%}
 </style>
 </head>
-<body onload="JS9.Preload('casa_0.5-1.5keV.fits', {scale:'log', colormap:'heat', contrast:1.6, bias:0.55}, 'casa_1.5-3.0keV.fits', {scale:'log', colormap:'heat', contrast:1.6, bias:0.55}, 'casa_4.0-6.0keV.fits', {scale:'log', colormap:'heat', contrast:1.6, bias:0.55});">
+<body onload="JS9.Preload('casa_4.0-6.0keV.fits', {scale:'log', colormap:'heat', contrast:1.6, bias:0.55}, 'casa_1.5-3.0keV.fits', {scale:'log', colormap:'heat', contrast:1.6, bias:0.55}, 'casa_0.5-1.5keV.fits', {scale:'log', colormap:'heat', contrast:1.6, bias:0.55});">
 <div class="top">
 <div class="top-title">National Science Olympiad Test Page</div>
 <div class="preload">
@@ -60,7 +58,7 @@ body{background:#05070d;color:#e8eef7;font-family:Inter,system-ui,-apple-system,
 <div class="JS9Toolbar" id="JS9Toolbar" data-width="800px"></div>
 <div class="display-wrap">
 <div class="JS9" id="JS9" data-width="800px" data-height="620px"></div>
-<div class="JS9Statusbar" id="JS9Statusbar" data-width="800px"></div>
+<div id="greenOverlay">000&nbsp;&nbsp;23:23:37.265 +58:50:39.04 (ICRS)&nbsp;&nbsp;3863.000 4154.000 (physical)</div>
 </div>
 <div><div class="JS9Colorbar" id="JS9Colorbar" data-width="800px" data-height="12px"></div></div>
 </div>
@@ -79,9 +77,61 @@ body{background:#05070d;color:#e8eef7;font-family:Inter,system-ui,-apple-system,
 <div class="card"><div class="ImExamYProj" id="JS9YProj"></div></div>
 </div>
 <script>
+var LOW_FILE='casa_0.5-1.5keV.fits';
 function fitLayout(){var vw=window.innerWidth;var mainW,sideW;if(vw<=900){mainW=vw-24;sideW=vw-48;}else{mainW=Math.floor(vw*0.68)-32;sideW=Math.floor(vw*0.32)-40;}mainW=Math.max(320,Math.min(1100,Math.floor(mainW)));sideW=Math.max(220,Math.min(320,Math.floor(sideW)));return {main:mainW,side:sideW};}
-(function(){var f=fitLayout();['JS9Menubar','JS9Toolbar','JS9','JS9Colorbar','JS9Statusbar'].forEach(function(id){var el=document.getElementById(id);if(el)el.setAttribute('data-width',f.main+'px');});['JS9Magnifier','JS9Panner'].forEach(function(id){var el=document.getElementById(id);if(el){el.setAttribute('data-width',f.side+'px');el.setAttribute('data-height',f.side+'px');}});})();
+(function(){var f=fitLayout();['JS9Menubar','JS9Toolbar','JS9','JS9Colorbar'].forEach(function(id){var el=document.getElementById(id);if(el)el.setAttribute('data-width',f.main+'px');});['JS9Magnifier','JS9Panner'].forEach(function(id){var el=document.getElementById(id);if(el){el.setAttribute('data-width',f.side+'px');el.setAttribute('data-height',f.side+'px');}});})();
 function loadEnergy(file,el){document.querySelectorAll('.preload button').forEach(function(b){b.classList.remove('active')});if(el)el.classList.add('active');JS9.Load(file,{scale:'log',colormap:'heat',contrast:1.6,bias:0.55});}
+function sexaRA(raDeg){var h=raDeg/15;var hh=Math.floor(h);var m=(h-hh)*60;var mm=Math.floor(m);var s=(m-mm)*60;return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+s.toFixed(3).padStart(6,'0');}
+function sexaDec(decDeg){var sign=decDeg<0?'-':'+';var a=Math.abs(decDeg);var dd=Math.floor(a);var m=(a-dd)*60;var mm=Math.floor(m);var s=(m-mm)*60;return sign+String(dd).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+s.toFixed(2).padStart(5,'0');}
+function updateOverlayFromIpos(ipos){
+  try{
+    var im=JS9.GetImage();if(!im||!ipos)return;
+    var vp=null;try{vp=JS9.GetValPos(ipos,false);}catch(e){}
+    var wcs=null;try{wcs=JS9.PixToWCS(ipos.x,ipos.y);}catch(e){}
+    var raStr=null,decStr=null,sysStr='ICRS';
+    if(wcs&&wcs.str){var p=wcs.str.trim().split(/\s+/);if(p.length>=3){raStr=p[0];decStr=p[1];sysStr=p[2];}else if(p.length>=2){raStr=p[0];decStr=p[1];}}
+    if(!raStr&&vp&&vp.ra!==undefined&&vp.dec!==undefined){raStr=sexaRA(vp.ra);decStr=sexaDec(vp.dec);if(vp.wcssys)sysStr=vp.wcssys;}
+    if(!raStr)return;
+    var lpos=null;try{lpos=JS9.ImageToLogicalPos(ipos,'physical');}catch(e){}
+    var px=lpos?lpos.x:(vp?vp.px:ipos.x);var py=lpos?lpos.y:(vp?vp.py:ipos.y);
+    var valStr=vp?String(Math.max(0,Math.round(vp.val))).padStart(3,'0'):'000';
+    var el=document.getElementById('greenOverlay');
+    if(el){el.textContent=valStr+'  '+raStr+' '+decStr+' ('+sysStr+')  '+Number(px).toFixed(3)+' '+Number(py).toFixed(3)+' (physical)';}
+  }catch(e){}
+}
+function updateOverlayFromEvent(evt){try{var dpos=JS9.EventToDisplayPos(evt);if(!dpos)return;var ipos=JS9.DisplayToImagePos(dpos);if(!ipos)return;updateOverlayFromIpos(ipos);}catch(e){}}
+function ensureLowLoaded(){
+  try{
+    var im=null;try{im=JS9.GetImage();}catch(e){}
+    if(!im){JS9.Load(LOW_FILE,{scale:'log',colormap:'heat',contrast:1.6,bias:0.55});return;}
+    // if current image is not low, switch to low only on first load
+    if(window._lowEnsured)return;
+    window._lowEnsured=true;
+    // Preload loads high,mid,low in order - low should already be current. If not, force low:
+    var fname='';try{fname=im.file||im.id||'';}catch(e){}
+    if(fname&&fname.indexOf('0.5-1.5')<0){
+      // show low - it is already preloaded, just display it
+      try{JS9.DisplayImage(LOW_FILE);}catch(e){JS9.Load(LOW_FILE,{scale:'log',colormap:'heat',contrast:1.6,bias:0.55});}
+    }
+  }catch(e){}
+}
+function initOverlay(){
+  try{JS9.SetWCSUnits('sexagesimal');}catch(e){}
+  try{JS9.SetWCSSys('ICRS');}catch(e){}
+  var disp=document.getElementById('JS9');
+  if(disp){disp.addEventListener('mousemove',updateOverlayFromEvent);disp.addEventListener('touchmove',function(e){if(e.touches&&e.touches[0])updateOverlayFromEvent(e.touches[0]);});}
+  ensureLowLoaded();
+  setTimeout(ensureLowLoaded,1200);
+  setTimeout(function(){
+    try{
+      var im=JS9.GetImage();if(!im)return;
+      var w=im.xdim||im.width||8192;var h=im.ydim||im.height||8192;
+      // center of displayed image in image coords
+      updateOverlayFromIpos({x:w/2,y:h/2});
+    }catch(e){}
+  },1500);
+}
+if(window.jQuery&&window.jQuery(document)){jQuery(document).on('JS9:ready',initOverlay);}else{document.addEventListener('DOMContentLoaded',function(){setTimeout(initOverlay,500);});}
 var _rt=null;window.addEventListener('resize',function(){clearTimeout(_rt);_rt=setTimeout(function(){try{var f=fitLayout();if(window.JS9&&JS9.ResizeDisplay){JS9.ResizeDisplay(f.main,620);}}catch(e){}},200);});
 </script>
 </body>
