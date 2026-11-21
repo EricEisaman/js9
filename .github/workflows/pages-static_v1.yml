@@ -1,12 +1,12 @@
 # Deploy static JS9 to Pages — no Jekyll
 # Replaces the old jekyll-build-pages workflow.
 # JS9 is prebuilt static HTML/JS. Jekyll must never run over it.
-# The broken demos/data symlink is removed in CI before upload.
+# Broken external-data symlinks are removed in CI before upload.
 name: Deploy static JS9 to Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
   workflow_dispatch:
 
 permissions:
@@ -28,16 +28,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Remove broken demos/data symlink
+      - name: Prepare static Pages site
         run: |
-          # demos/data in upstream JS9 is a symlink to the separate js9data repo.
-          # It does not exist in this fork, and Jekyll / Pages cannot follow it.
-          # Remove the link, replace with a real empty dir + README.
-          if [ -L demos/data ]; then echo "Removing broken symlink demos/data"; rm demos/data; fi
-          mkdir -p demos/data
-          # Ensure Pages never runs Jekyll, even if source is set to branch deploy
-          touch .nojekyll
-          ls -l demos/ | head -20
+          rm -rf _site
+          mkdir -p _site
+          rsync -a \
+            --exclude '/.git/' \
+            --exclude '/.github/' \
+            --exclude '/_site/' \
+            --exclude '/node_modules/' \
+            --exclude '/tests/data' \
+            --exclude '/demos/data' \
+            --exclude '/tests2/' \
+            --exclude '/old/' \
+            --exclude '/notes/' \
+            --exclude '/tmp/' \
+            --exclude '/talks/' \
+            ./ _site/
+          rm -rf _site/demos/data
+          mkdir -p _site/demos/data
+          printf 'This directory is intentionally empty in the Pages deployment.\n' > _site/demos/data/README.txt
+          cp js9.html _site/index.html
+          touch _site/.nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -45,7 +57,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "."
+          path: "_site"
 
       - name: Deploy to GitHub Pages
         id: deployment
