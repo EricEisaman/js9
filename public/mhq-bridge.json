@@ -1,0 +1,8 @@
+{
+    "allowedMissions": [
+        "js9-olympiad-v1"
+    ],
+    "bridge": "./mhq/bridge.js",
+    "missionEnabled": true,
+    "notes": "Only change to JS9 fork besides mhq/bridge.js + mhq/overlay.html. If IndexedDB is empty, bridge no-ops and JS9 works 100% standalone."
+}
