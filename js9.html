@@ -25,9 +25,8 @@ body{background:#05070d;color:#e8eef7;font-family:Inter,system-ui,-apple-system,
 @media(max-width:600px){.wrap{padding:8px;gap:12px}.top{padding:10px 12px 12px}}
 .card{background:#0b1220;border:1px solid #1c2a44;border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.45);min-width:0;max-width:100%;overflow:visible}
 .card-main{padding:0;overflow:visible}
-.card-main .JS9Menubar,.card-main .JS9Toolbar{padding:8px 10px 0;max-width:100%;overflow-x:auto}
-.card-main .JS9{border-radius:0;width:100%!important;max-width:100%!important;min-width:0}
-.card-main .JS9>div,.card-main .JS9 canvas{max-width:100%!important}
+.card-main .JS9Menubar,.card-main .JS9Toolbar{padding:8px 10px 0;max-width:100%}
+.card-main .JS9{border-radius:0}
 .card-main .JS9Colorbar{padding:8px 10px 0;max-width:100%;overflow:hidden}
 .card-main .JS9Statusbar{padding:6px 10px 10px;max-width:100%;overflow:hidden}
 .side{display:flex;flex-direction:column;gap:16px;min-width:0;max-width:100%}
@@ -38,7 +37,6 @@ body{background:#05070d;color:#e8eef7;font-family:Inter,system-ui,-apple-system,
 @media(max-width:900px){.analysis{grid-template-columns:minmax(0,1fr);padding:0 12px 12px}}
 .analysis .card{padding:12px;overflow:visible}
 .analysis .card>div{max-width:100%}
-.JS9{width:100%!important}
 </style>
 </head>
 <body onload="JS9.Preload('casa_0.5-1.5keV.fits', {scale:'log', colormap:'heat', contrast:1.6, bias:0.55}, 'casa_1.5-3.0keV.fits', {scale:'log', colormap:'heat', contrast:1.6, bias:0.55}, 'casa_4.0-6.0keV.fits', {scale:'log', colormap:'heat', contrast:1.6, bias:0.55});">
@@ -52,11 +50,11 @@ body{background:#05070d;color:#e8eef7;font-family:Inter,system-ui,-apple-system,
 </div>
 <div class="wrap">
 <div class="card card-main">
-<div class="JS9Menubar" id="JS9Menubar" data-width="100%"></div>
-<div class="JS9Toolbar" id="JS9Toolbar" data-width="100%"></div>
-<div class="JS9" id="JS9" data-width="100%" data-height="620px"></div>
-<div><div class="JS9Colorbar" id="JS9Colorbar" data-width="100%" data-height="12px"></div></div>
-<div><div class="JS9Statusbar" id="JS9Statusbar" data-width="100%"></div></div>
+<div class="JS9Menubar" id="JS9Menubar" data-width="800px"></div>
+<div class="JS9Toolbar" id="JS9Toolbar" data-width="800px"></div>
+<div class="JS9" id="JS9" data-width="800px" data-height="620px"></div>
+<div><div class="JS9Colorbar" id="JS9Colorbar" data-width="800px" data-height="12px"></div></div>
+<div><div class="JS9Statusbar" id="JS9Statusbar" data-width="800px"></div></div>
 </div>
 <div class="side">
 <div class="card"><div class="JS9Magnifier" id="JS9Magnifier" data-width="248px" data-height="248px"></div></div>
@@ -73,7 +71,10 @@ body{background:#05070d;color:#e8eef7;font-family:Inter,system-ui,-apple-system,
 <div class="card"><div class="ImExamYProj" id="JS9YProj"></div></div>
 </div>
 <script>
+function fitWidth(){var w=window.innerWidth;var avail;if(w<=900){avail=w-24;}else{avail=w-272-48;}return Math.max(320,Math.min(1100,Math.floor(avail)));}
+(function(){var fw=fitWidth();['JS9Menubar','JS9Toolbar','JS9','JS9Colorbar','JS9Statusbar'].forEach(function(id){var el=document.getElementById(id);if(el)el.setAttribute('data-width',fw+'px');});})();
 function loadEnergy(file,el){document.querySelectorAll('.preload button').forEach(function(b){b.classList.remove('active')});if(el)el.classList.add('active');JS9.Load(file,{scale:'log',colormap:'heat',contrast:1.6,bias:0.55});}
+var _rt=null;window.addEventListener('resize',function(){clearTimeout(_rt);_rt=setTimeout(function(){try{var fw=fitWidth();if(window.JS9&&JS9.ResizeDisplay){JS9.ResizeDisplay(fw,620);}}catch(e){}},200);});
 </script>
 </body>
 </html>
